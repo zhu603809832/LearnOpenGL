@@ -38,14 +38,14 @@ int main()
 	glfwSetKeyCallback(pWindow, key_callback);
 	glfwMakeContextCurrent(pWindow);
 	glfwGetFramebufferSize(pWindow, &nWidth, &nHeight);
-	//glViewport(0, 0, nWidth, nHeight);
+	glViewport(0, 0, nWidth, nHeight);
 	while (!glfwWindowShouldClose(pWindow))
 	{
 		//Event
 		glfwPollEvents();
 		//Render
-		//glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		//glClear(GL_COLOR_BUFFER_BIT);
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
 		//Swap
 		glfwSwapBuffers(pWindow);
 	}
