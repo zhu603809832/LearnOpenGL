@@ -130,6 +130,12 @@
       <AdditionalLibraryDirectories>..\..\Dev\GLFW\lib\Debug\x64;..\..\Dev\GLEW\lib\Debug\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Opengl32.lib;glfw3.lib;glew32sd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>copy .\Shader\vertex.glsl ..\Bin\vertex.glsl
+copy .\Shader\frag.glsl ..\Bin\frag.glsl
+copy $(TargetPath) ..\Bin\$(TargetFileName)
+copy $(TargetDir)$(TargetName).pdb ..\Bin\$(TargetName).pdb</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

@@ -71,8 +71,8 @@ int main()
 
 	//Shader
 	// Build and compile our shader program
-	const GLchar* vertexShaderFile = "C:\\Users\\zhu60\\Documents\\LearnOpenGL\\LearnOpenGL\\LearnOpenGL\\Shader\\vertex.glsl";
-	const GLchar* fragShaderFile = "C:\\Users\\zhu60\\Documents\\LearnOpenGL\\LearnOpenGL\\LearnOpenGL\\Shader\\frag.glsl";
+	const GLchar* vertexShaderFile = "vertex.glsl";
+	const GLchar* fragShaderFile = "frag.glsl";
 	Shader ourShader(vertexShaderFile, fragShaderFile);
 
 	//for test
