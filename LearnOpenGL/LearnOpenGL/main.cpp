@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 
 #include <GLFW/glfw3.h>
+#include <SOIL/SOIL.h>
 #include "App/Shader.h"
 
 const GLchar* vertexShaderSource = "#version 330 core\n"
@@ -117,6 +118,9 @@ int main()
 
 	glBindVertexArray(0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs)
 	
+	int nImageWidth = 0;
+	int nImageHeight = 0;
+	unsigned char* image = SOIL_load_image("wood.jpg", &nImageWidth, &nImageHeight, 0, SOIL_LOAD_RGB);
 	while (!glfwWindowShouldClose(pWindow))
 	{
 		//Event
