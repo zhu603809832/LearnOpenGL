@@ -10,8 +10,12 @@
 
 class Shader
 {
+protected:
+	GLuint m_uProgram;
+	bool m_bSuceess;
+	GLchar m_szErrorLog[512];
+
 public:
-	GLuint Program;
 	// Constructor generates the shader on the fly
 	Shader(const GLchar* vertexPath, const GLchar* fragmentPath)
 	{
@@ -23,6 +27,8 @@ public:
 		// ensures ifstream objects can throw exceptions:
 		vShaderFile.exceptions(std::ifstream::badbit);
 		fShaderFile.exceptions(std::ifstream::badbit);
+		m_bSuceess = false;
+		memset(m_szErrorLog, 0, sizeof(GLchar));
 		try
 		{
 			// Open files
@@ -58,6 +64,7 @@ public:
 		if (!success)
 		{
 			glGetShaderInfoLog(vertex, 512, NULL, infoLog);
+			glGetShaderInfoLog(vertex, 512, NULL, m_szErrorLog);
 			std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
 		}
 		// Fragment Shader
@@ -69,28 +76,46 @@ public:
 		if (!success)
 		{
 			glGetShaderInfoLog(fragment, 512, NULL, infoLog);
+			glGetShaderInfoLog(fragment, 512, NULL, m_szErrorLog);
 			std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
 		}
 		// Shader Program
-		this->Program = glCreateProgram();
-		glAttachShader(this->Program, vertex);
-		glAttachShader(this->Program, fragment);
-		glLinkProgram(this->Program);
+		this->m_uProgram = glCreateProgram();
+		glAttachShader(this->m_uProgram, vertex);
+		glAttachShader(this->m_uProgram, fragment);
+		glLinkProgram(this->m_uProgram);
 		// Print linking errors if any
-		glGetProgramiv(this->Program, GL_LINK_STATUS, &success);
+		glGetProgramiv(this->m_uProgram, GL_LINK_STATUS, &success);
 		if (!success)
 		{
-			glGetProgramInfoLog(this->Program, 512, NULL, infoLog);
+			glGetProgramInfoLog(this->m_uProgram, 512, NULL, infoLog);
+			glGetProgramInfoLog(this->m_uProgram, 512, NULL, m_szErrorLog);
 			std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
 		}
 		// Delete the shaders as they're linked into our program now and no longer necessery
 		glDeleteShader(vertex);
 		glDeleteShader(fragment);
+		m_bSuceess = true;
 	}
 	// Uses the current shader
 	void Use()
 	{
-		glUseProgram(this->Program);
+		glUseProgram(this->m_uProgram);
+	}
+
+	bool IsFailed()
+	{
+		return !m_bSuceess;
+	}
+
+	GLchar* GetErrorLog()
+	{
+		return m_szErrorLog;
+	}
+
+	GLuint GetProgram()
+	{
+		return m_uProgram;
 	}
 };
 
