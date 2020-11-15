@@ -28,6 +28,18 @@
     <None Include="Shader\frag.glsl">
       <Filter>Shader</Filter>
     </None>
+    <None Include="Shader\lighting.vs">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shader\lighting.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shader\lamp.vs">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Shader\lamp.frag">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\Shader.h">

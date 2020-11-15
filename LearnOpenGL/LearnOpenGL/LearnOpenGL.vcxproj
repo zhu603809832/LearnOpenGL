@@ -131,8 +131,7 @@
       <AdditionalDependencies>Opengl32.lib;glfw3.lib;glew32sd.lib;Soil.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy .\Shader\vertex.glsl ..\Bin\vertex.glsl
-copy .\Shader\frag.glsl ..\Bin\frag.glsl
+      <Command>xcopy /y  .\Shader\* ..\Bin\*
 copy $(TargetPath) ..\Bin\$(TargetFileName)
 copy $(TargetDir)$(TargetName).pdb ..\Bin\$(TargetName).pdb</Command>
     </PostBuildEvent>
@@ -163,6 +162,10 @@ copy $(TargetDir)$(TargetName).pdb ..\Bin\$(TargetName).pdb</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\frag.glsl" />
+    <None Include="Shader\lamp.frag" />
+    <None Include="Shader\lamp.vs" />
+    <None Include="Shader\lighting.frag" />
+    <None Include="Shader\lighting.vs" />
     <None Include="Shader\vertex.glsl" />
   </ItemGroup>
   <ItemGroup>
