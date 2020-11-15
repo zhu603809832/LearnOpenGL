@@ -15,48 +15,24 @@
 
 //Other includes
 #include "App/Shader.h"
+#include "App/Camera.h"
 
+void mouse_callback(GLFWwindow* pWindow, double dPosX, double dPosY);
+void key_callback(GLFWwindow* pWindow, int nKey, int nScanCode, int nAction, int nMode);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+void do_camera_movement();
+
+const GLuint WIDTH = 800, HEIGHT = 600;
+
+Camera  camera(glm::vec3(0.0f, 0.0f, 3.0f));
+GLfloat g_LastX = WIDTH / 2.0f;
+GLfloat g_LastY = HEIGHT / 2.0f;
 bool g_sKey[1024];
-glm::vec3 g_CameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 g_CameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 g_CameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 GLfloat g_fDeltaTime = 0.0f;
 GLfloat g_fLastFrame = 0.0f;
 
-void mouse_callback(GLFWwindow* pWindow, double dPosX, double dPosY)
-{
-
-}
-
-void key_callback(GLFWwindow* pWindow, int nKey, int nScanCode, int nAction, int nMode)
-{
-	GLfloat fCameraSpeed = 0.05;
-	if (nKey == GLFW_KEY_ESCAPE && nAction == GLFW_PRESS)
-		glfwSetWindowShouldClose(pWindow, GL_TRUE);
-	if (nKey >= 0 && nKey < 1024)
-	{
-		if (nAction == GLFW_PRESS)
-			g_sKey[nKey] = true;
-		else if (nAction == GLFW_RELEASE)
-			g_sKey[nKey] = false;
-	}
-}
-
-
-void do_camera_movement()
-{
-	// Camera controls
-	GLfloat cameraSpeed = 5.0f * g_fDeltaTime;
-	if (g_sKey[GLFW_KEY_W])
-		g_CameraPos += cameraSpeed * g_CameraFront;
-	if (g_sKey[GLFW_KEY_S])
-		g_CameraPos -= cameraSpeed * g_CameraFront;
-	if (g_sKey[GLFW_KEY_A])
-		g_CameraPos -= glm::normalize(glm::cross(g_CameraFront, g_CameraUp)) * cameraSpeed;
-	if (g_sKey[GLFW_KEY_D])
-		g_CameraPos += glm::normalize(glm::cross(g_CameraFront, g_CameraUp)) * cameraSpeed;
-}
+glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
 
 int main()
 {
@@ -72,7 +48,7 @@ int main()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-	GLFWwindow* pWindow = glfwCreateWindow(800, 600, "LearnOpenGL", nullptr, nullptr);
+	GLFWwindow* pWindow = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenGL", nullptr, nullptr);
 	if (pWindow == nullptr)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -81,8 +57,12 @@ int main()
 	}
 
 	glfwMakeContextCurrent(pWindow);
+
 	glfwSetKeyCallback(pWindow, key_callback);
 	glfwSetCursorPosCallback(pWindow, mouse_callback);
+	glfwSetScrollCallback(pWindow, scroll_callback);
+
+	glfwSetInputMode(pWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	glewExperimental = GL_TRUE;
 	GLenum nGlewRetCode = glewInit();
@@ -98,11 +78,11 @@ int main()
 	glfwGetFramebufferSize(pWindow, &nScreenWidth, &nScreenHeight);
 	glViewport(0, 0, nScreenWidth, nScreenHeight);
 	glEnable(GL_DEPTH_TEST);
+
 	//Shader
 	// Build and compile our shader program
-	const GLchar* vertexShaderFile = "vertex.glsl";
-	const GLchar* fragShaderFile = "frag.glsl";
-	Shader ourShader(vertexShaderFile, fragShaderFile);
+	Shader ourShader("vertex.glsl", "frag.glsl");
+	
 	if (ourShader.IsFailed())
 	{
 		std::cout << "Failed to Use Shader File, Error:" << ourShader.GetErrorLog() << std::endl;
@@ -202,7 +182,6 @@ int main()
 	glBindVertexArray(0); // Unbind VAO (it's always a good thing to unbind any buffer/array to prevent strange bugs)
 	
 	GLuint texture1;
-	GLuint texture2;
 	glGenTextures(1, &texture1);
 	glBindTexture(GL_TEXTURE_2D, texture1);
 
@@ -224,6 +203,7 @@ int main()
 	SOIL_free_image_data(image);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
+	GLuint texture2;
 	glGenTextures(1, &texture2);
 	glBindTexture(GL_TEXTURE_2D, texture2);
 	
@@ -242,12 +222,14 @@ int main()
 
 	while (!glfwWindowShouldClose(pWindow))
 	{
-		//Event
-		glfwPollEvents();
-		do_camera_movement();
 		GLfloat fCurrentFrame = glfwGetTime();
 		g_fDeltaTime = fCurrentFrame - g_fLastFrame;
 		g_fLastFrame = fCurrentFrame;
+
+		//Event
+		glfwPollEvents();
+		do_camera_movement();
+
 		//Clear
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -264,16 +246,17 @@ int main()
 		glBindTexture(GL_TEXTURE_2D, texture2);
 		glUniform1i(glGetUniformLocation(ourShader.GetProgram(), "ourTexture2"), 1);
 
-		GLint modelLoc = glGetUniformLocation(ourShader.GetProgram(), "model");
-		GLint viewLoc = glGetUniformLocation(ourShader.GetProgram(), "view");
-		GLint projectionLoc = glGetUniformLocation(ourShader.GetProgram(), "projection");
 		glm::mat4 model;
 		glm::mat4 view;
 		glm::mat4 projection;
-		//model = glm::rotate(model, -55.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::rotate(model, (GLfloat)glfwGetTime() * 50.0f / 50, glm::vec3(0.5f, 1.0f, 0.0f));
-		view = glm::lookAt(g_CameraPos, g_CameraPos + g_CameraFront, g_CameraUp);
-		projection = glm::perspective(45.0f, (GLfloat)nScreenWidth / (GLfloat)nScreenHeight, 0.1f, 100.0f);
+
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+		view = camera.GetViewMatrix();
+		projection = glm::perspective(camera.GetZoom(), (GLfloat)nScreenWidth / (GLfloat)nScreenHeight, 0.1f, 100.0f);
+
+		GLint modelLoc = glGetUniformLocation(ourShader.GetProgram(), "model");
+		GLint viewLoc = glGetUniformLocation(ourShader.GetProgram(), "view");
+		GLint projectionLoc = glGetUniformLocation(ourShader.GetProgram(), "projection");
 
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
@@ -306,4 +289,55 @@ int main()
 	glfwTerminate();
 
 	return 0;
+}
+
+
+void key_callback(GLFWwindow* pWindow, int nKey, int nScanCode, int nAction, int nMode)
+{
+	GLfloat fCameraSpeed = 0.05f;
+	if (nKey == GLFW_KEY_ESCAPE && nAction == GLFW_PRESS)
+		glfwSetWindowShouldClose(pWindow, GL_TRUE);
+	if (nKey >= 0 && nKey < 1024)
+	{
+		if (nAction == GLFW_PRESS)
+			g_sKey[nKey] = true;
+		else if (nAction == GLFW_RELEASE)
+			g_sKey[nKey] = false;
+	}
+}
+
+void do_camera_movement()
+{
+	// Camera controls
+	GLfloat cameraSpeed = 5.0f * g_fDeltaTime;
+	if (g_sKey[GLFW_KEY_W])
+		camera.ProcessKeyboard(FORWARD, g_fDeltaTime);
+	if (g_sKey[GLFW_KEY_S])
+		camera.ProcessKeyboard(BACKWARD, g_fDeltaTime);
+	if (g_sKey[GLFW_KEY_A])
+		camera.ProcessKeyboard(LEFT, g_fDeltaTime);
+	if (g_sKey[GLFW_KEY_D])
+		camera.ProcessKeyboard(RIGHT, g_fDeltaTime);
+}
+
+void mouse_callback(GLFWwindow* pWindow, double dPosX, double dPosY)
+{
+	static bool sbFirstMouse = true;
+	if (sbFirstMouse)
+	{
+		g_LastX = dPosX;
+		g_LastY = dPosY;
+		sbFirstMouse = false;
+	}
+	GLfloat fOffsetX = dPosX - g_LastX;
+	GLfloat fOffsetY = g_LastY - dPosY;
+	g_LastX = dPosX;
+	g_LastY = dPosY;
+
+	camera.ProcessMouseMovement(fOffsetX, fOffsetY);
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	camera.ProcessMouseScroll(yoffset);
 }

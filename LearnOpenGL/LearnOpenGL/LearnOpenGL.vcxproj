@@ -157,6 +157,7 @@ copy $(TargetDir)$(TargetName).pdb ..\Bin\$(TargetName).pdb</Command>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="App\Camera.cpp" />
     <ClCompile Include="App\Shader.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -166,6 +167,7 @@ copy $(TargetDir)$(TargetName).pdb ..\Bin\$(TargetName).pdb</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\Shader.h" />
+    <ClInclude Include="App\Camera.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -17,6 +17,9 @@
     <ClCompile Include="App\Shader.cpp">
       <Filter>App</Filter>
     </ClCompile>
+    <ClCompile Include="App\Camera.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\vertex.glsl">
@@ -28,6 +31,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\Shader.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Camera.h">
       <Filter>App</Filter>
     </ClInclude>
   </ItemGroup>
