@@ -22,12 +22,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shader\vertex.glsl">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="Shader\frag.glsl">
-      <Filter>Shader</Filter>
-    </None>
     <None Include="Shader\lighting.vs">
       <Filter>Shader</Filter>
     </None>

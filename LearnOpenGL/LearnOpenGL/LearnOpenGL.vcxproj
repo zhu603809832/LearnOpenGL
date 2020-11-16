@@ -161,12 +161,10 @@ copy $(TargetDir)$(TargetName).pdb ..\Bin\$(TargetName).pdb</Command>
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shader\frag.glsl" />
     <None Include="Shader\lamp.frag" />
     <None Include="Shader\lamp.vs" />
     <None Include="Shader\lighting.frag" />
     <None Include="Shader\lighting.vs" />
-    <None Include="Shader\vertex.glsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App\Shader.h" />
