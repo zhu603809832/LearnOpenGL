@@ -141,6 +141,20 @@ int main()
 		1, 2, 3
 	};
 
+	// Positions all containers
+	glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f,  3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
+
 	GLuint VBO, VAO, EBO;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
@@ -231,17 +245,29 @@ int main()
 		//Render
 		lightShader.Use();
 
+		GLint lightDirLoc = glGetUniformLocation(lightShader.GetProgram(), "light.direction");
+		GLint lightSpotdirLoc = glGetUniformLocation(lightShader.GetProgram(), "light.direction");
 		GLint lightPosLoc = glGetUniformLocation(lightShader.GetProgram(), "light.position");
+		GLint lightSpotCutOffLoc = glGetUniformLocation(lightShader.GetProgram(), "light.cutOff");
+		GLint lightSpotOutCutOffLoc = glGetUniformLocation(lightShader.GetProgram(), "light.outerCutOff");
 		GLint viewPosLoc = glGetUniformLocation(lightShader.GetProgram(), "viewPos");
-		glm::vec3 cameraPos = camera.GetPosition();
 		glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
+		glm::vec3 cameraPos = camera.GetPosition();
+		glUniform3f(lightDirLoc, -0.2f, -1.0f, -0.3f);
 		glUniform3f(viewPosLoc, cameraPos.x, cameraPos.y, cameraPos.z);
 
+		glUniform3f(lightPosLoc, camera.Position.x, camera.Position.y, camera.Position.z);
+		glUniform3f(lightSpotdirLoc, camera.Front.x, camera.Front.y, camera.Front.z);
+		glUniform1f(lightSpotCutOffLoc, glm::cos(glm::radians(12.5f)));
+		glUniform1f(lightSpotOutCutOffLoc, glm::cos(glm::radians(17.5f)));
+
 		// Set lights properties
-		glUniform3f(glGetUniformLocation(lightShader.GetProgram(), "light.ambient"), 0.2f, 0.2f, 0.2f);
-		glUniform3f(glGetUniformLocation(lightShader.GetProgram(), "light.diffuse"), 0.5f, 0.5f, 0.5f);
+		glUniform3f(glGetUniformLocation(lightShader.GetProgram(), "light.ambient"), 0.1f, 0.1f, 0.1f);
+		glUniform3f(glGetUniformLocation(lightShader.GetProgram(), "light.diffuse"), 0.8f, 0.8f, 0.8f);
 		glUniform3f(glGetUniformLocation(lightShader.GetProgram(), "light.specular"), 1.0f, 1.0f, 1.0f);
-		
+		glUniform1f(glGetUniformLocation(lightShader.GetProgram(), "light.constant"), 1.0f);
+		glUniform1f(glGetUniformLocation(lightShader.GetProgram(), "light.linear"), 0.09);
+		glUniform1f(glGetUniformLocation(lightShader.GetProgram(), "light.quadratic"), 0.032);
 		glUniform1f(glGetUniformLocation(lightShader.GetProgram(), "material.shininess"), 32.0f);
 
 		// Create camera transformations
@@ -265,42 +291,36 @@ int main()
 
 
 		glBindVertexArray(VAO);
-		glm::mat4 model;
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+		for (GLuint i = 0; i < 10; i++)
+		{
+			glm::mat4 model = glm::mat4();
+			model = glm::translate(model, cubePositions[i]);
+			GLfloat angle = 20.0f * i;
+			model = glm::rotate(model, angle, glm::vec3(1.0f, 0.3f, 0.5f));
+			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 		glBindVertexArray(0);
 
-		lampShader.Use();
+		//lampShader.Use();
 
-		// // Bind Textures using texture units
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, texture1);
-		//glUniform1i(glGetUniformLocation(lampShader.GetProgram(), "ourTexture1"), 0);
+		//modelLoc = glGetUniformLocation(lampShader.GetProgram(), "model");
+		//viewLoc = glGetUniformLocation(lampShader.GetProgram(), "view");
+		//projLoc = glGetUniformLocation(lampShader.GetProgram(), "projection");
 
-		//glActiveTexture(GL_TEXTURE1);
-		//glBindTexture(GL_TEXTURE_2D, texture2);
-		//glUniform1i(glGetUniformLocation(lampShader.GetProgram(), "ourTexture2"), 1);
+		//glm::mat4 model;
+		//model = glm::mat4();
+		//model = glm::translate(model, lightPos);
+		//model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
 
-		modelLoc = glGetUniformLocation(lampShader.GetProgram(), "model");
-		viewLoc = glGetUniformLocation(lampShader.GetProgram(), "view");
-		projLoc = glGetUniformLocation(lampShader.GetProgram(), "projection");
+		//glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		//glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+		//glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-		model = glm::mat4();
-		model = glm::translate(model, lightPos);
-		model = glm::scale(model, glm::vec3(0.2f)); // Make it a smaller cube
-
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-		glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
-
-		//Draw
-		//glBindVertexArray(VAO);
-		////glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		//glBindVertexArray(lightVAO);
+		//glDrawArrays(GL_TRIANGLES, 0, 36);
 		//glBindVertexArray(0);
-		glBindVertexArray(lightVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glBindVertexArray(0);
-
+		
 		//Swap
 		glfwSwapBuffers(pWindow);
 	}
