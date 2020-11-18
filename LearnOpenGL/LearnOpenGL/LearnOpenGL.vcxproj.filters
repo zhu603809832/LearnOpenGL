@@ -20,6 +20,9 @@
     <ClCompile Include="App\Camera.cpp">
       <Filter>App</Filter>
     </ClCompile>
+    <ClCompile Include="App\Mesh.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shader\lighting.vs">
@@ -40,6 +43,9 @@
       <Filter>App</Filter>
     </ClInclude>
     <ClInclude Include="App\Camera.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="App\Mesh.h">
       <Filter>App</Filter>
     </ClInclude>
   </ItemGroup>

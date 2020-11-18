@@ -157,6 +157,7 @@ copy $(TargetDir)$(TargetName).pdb ..\Bin\$(TargetName).pdb</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="App\Camera.cpp" />
+    <ClCompile Include="App\Mesh.cpp" />
     <ClCompile Include="App\Shader.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -167,6 +168,7 @@ copy $(TargetDir)$(TargetName).pdb ..\Bin\$(TargetName).pdb</Command>
     <None Include="Shader\lighting.vs" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="App\Mesh.h" />
     <ClInclude Include="App\Shader.h" />
     <ClInclude Include="App\Camera.h" />
   </ItemGroup>
