@@ -13,9 +13,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-//Other includes
+//App includes
 #include "App/Shader.h"
 #include "App/Camera.h"
+#include "App/Model.h"
 
 void mouse_callback(GLFWwindow* pWindow, double dPosX, double dPosY);
 void key_callback(GLFWwindow* pWindow, int nKey, int nScanCode, int nAction, int nMode);
@@ -81,8 +82,10 @@ int main()
 
 	//Shader
 	// Build and compile our shader program
-	Shader lightShader("lighting.vs", "lighting.frag");
-	Shader lampShader("lamp.vs", "lamp.frag");
+	Shader lightShader("./Shader/lighting.vs", "./Shader/lighting.frag");
+	Shader lampShader("./Shader/lamp.vs", "./Shader/lamp.frag");
+	Shader loadingModelShader("./Shader/model_loading.vs", "./Shader/model_loading.frag");
+	Model loadingModel("./Data/Model/backpack.obj", "./Data/Texture/");
 
 	if (lampShader.IsFailed())
 	{
@@ -206,7 +209,7 @@ int main()
 	int width, height;
 	unsigned char* image;
 	// Diffuse map
-	image = SOIL_load_image("container2.png", &width, &height, 0, SOIL_LOAD_RGB);
+	image = SOIL_load_image("./data/Texture/container2.png", &width, &height, 0, SOIL_LOAD_RGB);
 	glBindTexture(GL_TEXTURE_2D, diffuseMap);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 	glGenerateMipmap(GL_TEXTURE_2D);
@@ -218,7 +221,7 @@ int main()
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// Specular map
-	image = SOIL_load_image("container2_specular.png", &width, &height, 0, SOIL_LOAD_RGB);
+	image = SOIL_load_image("./data/Texture/container2_specular.png", &width, &height, 0, SOIL_LOAD_RGB);
 	glBindTexture(GL_TEXTURE_2D, specularMap);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
 	glGenerateMipmap(GL_TEXTURE_2D);
@@ -249,6 +252,20 @@ int main()
 		//Clear
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		loadingModelShader.Use();   // <-- Don't forget this one!
+		// Transformation matrices
+		glm::mat4 loadingModelProjection = glm::perspective(camera.Zoom, (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
+		glm::mat4 loadingModelView = camera.GetViewMatrix();
+		glUniformMatrix4fv(glGetUniformLocation(loadingModelShader.GetProgram(), "projection"), 1, GL_FALSE, glm::value_ptr(loadingModelProjection));
+		glUniformMatrix4fv(glGetUniformLocation(loadingModelShader.GetProgram(), "view"), 1, GL_FALSE, glm::value_ptr(loadingModelView));
+
+		// Draw the loaded model
+		glm::mat4 loadingModelMatrix;
+		loadingModelMatrix = glm::translate(loadingModelMatrix, glm::vec3(0.0f, -1.75f, 0.0f)); // Translate it down a bit so it's at the center of the scene
+		loadingModelMatrix = glm::scale(loadingModelMatrix, glm::vec3(0.2f, 0.2f, 0.2f));	// It's a bit too big for our scene, so scale it down
+		glUniformMatrix4fv(glGetUniformLocation(loadingModelShader.GetProgram(), "model"), 1, GL_FALSE, glm::value_ptr(loadingModelMatrix));
+		loadingModel.Draw(loadingModelShader);
 
 		//Render
 		 // Use cooresponding shader when setting uniforms/drawing objects

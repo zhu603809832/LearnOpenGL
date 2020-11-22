@@ -122,16 +122,16 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\Dev\GLFW\include;..\..\Dev\GLEW\include;..\..\Dev\GLM\include;..\..\Dev\SOIL\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\Dev\GLFW\include;..\..\Dev\GLEW\include;..\..\Dev\GLM\include;..\..\Dev\SOIL\include;..\..\Dev\Assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\..\Dev\GLFW\lib\Debug\x64;..\..\Dev\GLEW\lib\Debug\x64;..\..\Dev\SOIL\lib\Debug\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Opengl32.lib;glfw3.lib;glew32sd.lib;Soil.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\Dev\GLFW\lib\Debug\x64;..\..\Dev\GLEW\lib\Debug\x64;..\..\Dev\SOIL\lib\Debug\x64;..\..\Dev\Assimp\lib\Debug\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Opengl32.lib;glfw3.lib;glew32sd.lib;Soil.lib;assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /y  .\Shader\* ..\Bin\*
+      <Command>xcopy /y  .\Shader\* ..\Bin\Shader\*
 copy $(TargetPath) ..\Bin\$(TargetFileName)
 copy $(TargetDir)$(TargetName).pdb ..\Bin\$(TargetName).pdb</Command>
     </PostBuildEvent>
