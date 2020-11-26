@@ -317,8 +317,9 @@ int main()
 		//Clear
 		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		glEnable(GL_DEPTH_TEST);
-		glDisable(GL_STENCIL_TEST);
+
+		//glEnable(GL_DEPTH_TEST);
+		//glDisable(GL_STENCIL_TEST);
 
 		loadingModelShader.Use();   // <-- Don't forget this one!
 		// Transformation matrices
@@ -494,27 +495,27 @@ int main()
 		// 2nd. Render pass, now draw slightly scaled versions of the objects, this time disabling stencil writing.
 		// Because stencil buffer is now filled with several 1s. The parts of the buffer that are 1 are now not drawn, thus only drawing 
 		// the objects' size differences, making it look like borders.
-		glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-		glStencilMask(0x00);
-		glDisable(GL_DEPTH_TEST);
-		stencilSingColorShader.Use();
-		GLfloat scale = 1.1;
-		// Cubes
-		glBindVertexArray(cubeVAO);
-		glBindTexture(GL_TEXTURE_2D, cubeTexture);
-		model = glm::mat4();
-		model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
-		model = glm::scale(model, glm::vec3(scale, scale, scale));
-		glUniformMatrix4fv(glGetUniformLocation(stencilSingColorShader.GetProgram(), "model"), 1, GL_FALSE, glm::value_ptr(model));
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		model = glm::mat4();
-		model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(scale, scale, scale));
-		glUniformMatrix4fv(glGetUniformLocation(stencilSingColorShader.GetProgram(), "model"), 1, GL_FALSE, glm::value_ptr(model));
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glBindVertexArray(0);
-		glStencilMask(0xFF);
-		glEnable(GL_DEPTH_TEST);
+		//glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+		//glStencilMask(0x00);
+		//glDisable(GL_DEPTH_TEST);
+		//stencilSingColorShader.Use();
+		//GLfloat scale = 1.1;
+		//// Cubes
+		//glBindVertexArray(cubeVAO);
+		//glBindTexture(GL_TEXTURE_2D, cubeTexture);
+		//model = glm::mat4();
+		//model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
+		//model = glm::scale(model, glm::vec3(scale, scale, scale));
+		//glUniformMatrix4fv(glGetUniformLocation(stencilSingColorShader.GetProgram(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+		//glDrawArrays(GL_TRIANGLES, 0, 36);
+		//model = glm::mat4();
+		//model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
+		//model = glm::scale(model, glm::vec3(scale, scale, scale));
+		//glUniformMatrix4fv(glGetUniformLocation(stencilSingColorShader.GetProgram(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+		//glDrawArrays(GL_TRIANGLES, 0, 36);
+		//glBindVertexArray(0);
+		//glStencilMask(0xFF);
+		//glEnable(GL_DEPTH_TEST);
 
 		//Swap
 		glfwSwapBuffers(pWindow);

@@ -49,6 +49,21 @@ public:
 		{
 			std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
 		}
+		
+		if (0 == vertexCode.size())
+		{
+			std::cout << vertexPath << std::endl;
+			std::cout << "ERROR::SHADER::VERTEX::CODE == 0" << std::endl;
+			return;
+		}
+
+		if (0 == fragmentCode.size())
+		{
+			std::cout << fragmentPath << std::endl;
+			std::cout << "ERROR::SHADER::VERTEX::CODE == 0" << std::endl;
+			return;
+		}
+
 		const GLchar* vShaderCode = vertexCode.c_str();
 		const GLchar* fShaderCode = fragmentCode.c_str();
 		// 2. Compile shaders
